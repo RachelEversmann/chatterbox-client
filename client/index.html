@@ -8,7 +8,7 @@
     <!-- dependencies -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/moment/moment.js"> </script>
-    <script>
+   <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
       if (!/(&|\?)username=/.test(window.location.search)) {
         var newSearch = window.location.search;
@@ -32,30 +32,38 @@
           <option value="lobby">Lobby</option>
         </select>
         <form>
-          <input type="text"></input>
-          <button>Submit</button>
+          <input type="text" id = 'text' ></input>
         </form>
+          <button id = 'inputText'> submit </button>
     </div>
     <div id="chats">
     </div>
-
     <script>
       $(document).ready(function() {
         var apiUrl = "http://parse.atx.hackreactor.com/chatterbox/classes/messages";
         var app = new App(apiUrl);
         app.init();
-        $.get( apiUrl, function( data ) {
-          $( "#chats" ).html( data );
-          // console.log(data);
-        });
-
+        app.setUser(window.location.search.substr(10));
         $('#roomSelect').on('change', function() {
+          if (this.value === 'New Room') {
+            this.value = room;
+            var room = prompt('New Room Name');
+            if(room.includes('<')) {
+              room = 'lobby';
+            }
+            $('#roomSelect').append('<option value = ' + room + '>' + room + '</option');
+          }
+
           app.currentRoom = this.value;
           console.log('current room:', app.currentRoom);
           $('#chats').html('');
           app.getMessagesForChannel();
+        });
+
+        $('#inputText').on('click', function() {
+          app.send(text.value);
+          app.getMessagesForChannel();
         })
-        //document.getElementById("roomSelect").value;
       });
     </script>
   </body>
